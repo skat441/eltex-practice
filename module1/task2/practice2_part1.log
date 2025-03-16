@@ -47,3 +47,31 @@ chage -M 10 user3
 chage -M 10 user2
 chage -M 10 user1
 chage -l user1
+nano /etc/motd
+rsync -a /etc /root/etc_backup
+tar --totals -cf archive.tar etc_backup
+bzip2 -c archive.tar>archive.tar.bz2
+gzip -c archive.tar>archive.tar.gz
+7z a archive.tar.7z archive.tar
+ls -lh
+-rw-r--r-- 1 root root 3.4M Mar 15 10:54 archive.tar
+-rw-r--r-- 1 root root 475K Mar 15 11:12 archive.tar.7z
+-rw-r--r-- 1 root root 552K Mar 15 11:06 archive.tar.bz2
+-rw-r--r-- 1 root root 581K Mar 15 12:33 archive.tar.gz
+nano motd
+rsinc -azvh /etc /root/etc_backup
+sending incremental file list
+etc/
+etc/motd
+gunzip -c archive.tar.gz > archivegz.tar
+tar -uvf archivegz.tar etc_backup
+gzip -c archivegz.tar>archive.tar.gz
+tar -df archive.tar.bz2 -C /root/
+etc_backup/etc/motd: Mod time differs
+etc_backup/etc/motd: Size differs
+tar -zxvf archive.tar.gz -C /root/etc_backup_gzip
+7z x archive.tar.7z -o/root/etc_backup_7zip/
+diff /root/etc_backup_7zip/etc_backup/etc/motd /root/etc_backup_gzip/etc_backup/etc/motd
+1a2
+> 15.03.2025 18:31
+
