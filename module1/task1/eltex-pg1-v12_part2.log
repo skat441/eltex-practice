@@ -1,0 +1,10 @@
+ls *TAB TAB*
+HIST *TAB TAB*
+echo $HISTSIZE
+find . ".*"
+export HISTTIMEFORMAT="%d/%m/%y %T "
+history -a
+export PROMPT_COMMAND='history -a'
+find /bin/ /sbin/ -regex ".*[0-9].*"
+PS1="${debian_chroot:+($debian_chroot)}\u@\h-$(date +%H:%M)>"
+mkdir $(date +%Y):{1..12}

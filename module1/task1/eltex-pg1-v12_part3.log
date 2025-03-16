@@ -1,0 +1,9 @@
+mkdir -p D1/D2/D3
+ln ../file.txt hardlink.txt
+ln -s ../file.txt softlink.txt
+mv file.txt ..
+rm -r D2
+find / -type f -size +50M 2>/dev/null
+which find
+file /usr/bin/find
+file /boot/initrd.img*

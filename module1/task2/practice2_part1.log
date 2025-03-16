@@ -1,0 +1,49 @@
+ssh-keygen
+ssh-copy-id root@172.16.9.186
+ssh root@172.16.9.186
+useradd -m -s /bin/bash/ user1
+passwd user1
+New password:1111
+Retype new password:
+passwd: password updated successfully
+adduser user2
+adduser user3
+usermod -s /usr/sbin/nologin user3
+su user3
+su -s /bin/bash user3
+addgroup myusers
+usermod -G myusers user1
+usermod -G myusers user2
+usermod -G myusers user3
+id -Gn user1
+id -Gn user2
+id -Gn user3
+mkdir share
+chown :myusers /opt/share
+stat /opt/share
+umask 004
+su - user1
+umask
+su - user1
+touch usr1.txt
+exit
+su - user2
+touch usr2.txt
+exit
+su -s /bin/bash user3
+touch usr3.txt
+exit
+su - user1
+rm usr3.txt
+exit
+chmod +t /opt/share
+su -s /bin/bash user3
+rm usr1.txt
+rm: cannot remove 'usr1.txt': Operation mot permitted
+user1	ALL=(ALL) NOPASSWD: /usr/bin/dmesg
+su - user1
+dmesg
+chage -M 10 user3
+chage -M 10 user2
+chage -M 10 user1
+chage -l user1
