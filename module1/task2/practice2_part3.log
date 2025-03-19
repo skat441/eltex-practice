@@ -23,3 +23,10 @@ git add .
 git status
 git commit
 git push
+git clone https://github.com/skat441/eltex-practice.git
+git add .
+git commit -m "added logs in practice2_1.log"
+git push
+git fetch
+git log origin/main
+git merge
