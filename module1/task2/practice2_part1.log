@@ -74,4 +74,3 @@ tar -zxvf archive.tar.gz -C /root/etc_backup_gzip
 diff /root/etc_backup_7zip/etc_backup/etc/motd /root/etc_backup_gzip/etc_backup/etc/motd
 1a2
 > 15.03.2025 18:31
-
