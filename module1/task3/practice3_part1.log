@@ -1,0 +1,3 @@
+ps -eLo nlwp,pid,cmd | awk '$1>1 {print $1"\t"$2"\t"$3}' | uniq|wc| awk '{print $}'
+
+11
