@@ -2,31 +2,7 @@
 #include "header.h"
 
 int main(){
-    // Date d;
-    //d.day=21;
-    //d.month=3;
-    //d.year=2025;
-    //Person* p = PersonInit(1,"Fralov\0","Pavel\0",1, 79841103791, "knovopashen44@gmail.com", d);
-    //printf("new person is:%s %s %d %llu %s %d-%d-%d\n",p->FirstName,p->LastName,p->id,p->PhoneNumber,p->Email,p->BirthDate.day,p->BirthDate.month,p->BirthDate.year);
-    //p=PersonFree(p);
-    //printf("%d\n",p);
-    //int num=0;
-    //scanf("%d",&num);
-    //printf("%d\n",num);
     Person** phoneBook=malloc(sizeof(Person*));
-    Person* p2 = PersonInit(1,"Grimov\0","Alex\0",0);
-    //phoneBook[0]=p;
-    //phoneBook[1]=p2;
-    // for(int i=0;i<2;i++){
-    //     printf("new person is:%s %s %d %llu %s %d-%d-%d\n",phoneBook[i]->FirstName,phoneBook[i]->LastName,phoneBook[i]->id,phoneBook[i]->PhoneNumber,phoneBook[i]->Email,phoneBook[i]->BirthDate.day,phoneBook[i]->BirthDate.month,phoneBook[i]->BirthDate.year); 
-    // }
-    //phoneBook[1]=PersonFree(phoneBook[1]);
-    // printf("old ptr:%d\n",phoneBook);
-    // phoneBook=AddContact(phoneBook,&phoneBookSize,p);
-    // printf("new ptr:%d\n",phoneBook);
-    // phoneBook=AddContact(phoneBook,&phoneBookSize,p2);
-    // printf("new person is:%s %s %d %llu %s %d-%d-%d\n",phoneBook[1]->FirstName,phoneBook[0]->LastName,phoneBook[0]->id,phoneBook[0]->PhoneNumber,phoneBook[0]->Email,phoneBook[0]->BirthDate.day,phoneBook[0]->BirthDate.month,phoneBook[0]->BirthDate.year); 
-    // printf("%d\n\n",phoneBookSize);
     int id=1;
     int ID;
     char isfound;
@@ -46,13 +22,39 @@ int main(){
         switch (answer)
         {
         case 0:
+            Person* newP;
             printf("Enter Person Firstname:");
             scanf("%s",buffer);
             strncpy(fname,buffer,strlen(buffer));
+            strncpy(buffer,nul,100);
             printf("Enter Person Lastname:");
             scanf("%s",buffer);
             strncpy(lname,buffer,strlen(buffer));
-            Person* newP = PersonInit(id,fname,lname,0);
+            printf("ExtraInfo?[y/n]:");
+            scanf("%s",buffer);
+            if(buffer[0]=='y'){
+                long long phonenumber=0;
+                char email[100]={0};
+                Date date;
+                printf("Enter Person phonenumber:");
+                scanf("%llu",&phonenumber);
+
+                printf("Enter Person email:");
+                scanf("%s",buffer);
+                strncpy(email,buffer,strlen(buffer));
+                strncpy(buffer,nul,100);
+
+                printf("Enter Person birth day:");
+                scanf("%d",&date.day);
+                printf("Enter Person birth month:");
+                scanf("%d",&date.month);
+                printf("Enter Person birth year:");
+                scanf("%d",&date.year);
+                newP = PersonInit(id,fname,lname,1,phonenumber,email,date);
+            }
+            else{
+            newP = PersonInit(id,fname,lname,0);
+            }
             id++;
             //printf("%d",phoneBookSize);
             phoneBook=AddContact(phoneBook,&phoneBookSize,newP);
@@ -90,16 +92,56 @@ int main(){
                 printf("\nPerson with id=%d not found!!!\n",ID);
             }
             else{
-                //phoneBook=deleteContact(phoneBook,&phoneBookSize,ID);
-                printf("Enter Person Firstname:");
-                scanf("%s",buffer);
-                strncpy(fname,buffer,strlen(buffer));
-                printf("Enter Person Lastname:");
-                scanf("%s",buffer);
-                strncpy(lname,buffer,strlen(buffer));
-                //
-                changePerson(phoneBook,phoneBookSize,ID,fname,lname);
-                //
+                int feildToChange=0;
+                printf("1-Firstname\n2-Lastname\n3-ShowExtraInfo\n4-Phonenumber\n5-Email\n6-Birthdate\nEnter field number to change:");
+                scanf("%d",&feildToChange);
+                fseek(stdin,0,SEEK_END);
+                switch (feildToChange)
+                {
+                case 1://change FirstName
+                    printf("Enter Person Firstname:");
+                    scanf("%s",buffer);
+                    strncpy(fname,buffer,strlen(buffer));
+                    changePerson(phoneBook,phoneBookSize,ID,1,fname);
+                    break;
+                case 2:
+                    printf("Enter Person Lastname:");
+                    scanf("%s",buffer);
+                    strncpy(lname,buffer,strlen(buffer));
+                    changePerson(phoneBook,phoneBookSize,ID,2,lname);
+                    break;
+                case 3:
+                    int newvalue;
+                    printf("ExtraInfo?[1/0]:");
+                    scanf("%d",&newvalue);
+                    changePerson(phoneBook,phoneBookSize,ID,3,newvalue);
+                    break;
+                case 4:
+                    long long newphone=0;
+                    printf("newphonenumber:");
+                    scanf("%llu",&newphone);
+                    changePerson(phoneBook,phoneBookSize,ID,4,newphone);
+                    break;
+                case 5:
+                    char newEmail[100];
+                    printf("Enter Person email:");
+                    scanf("%s",buffer);
+                    strncpy(newEmail,buffer,strlen(buffer));
+                    changePerson(phoneBook,phoneBookSize,ID,5,newEmail);
+                    break;
+                case 6:
+                    Date date;
+                    printf("Enter Person birth day:");
+                    scanf("%d",&date.day);
+                    printf("Enter Person birth month:");
+                    scanf("%d",&date.month);
+                    printf("Enter Person birth year:");
+                    scanf("%d",&date.year);
+                    changePerson(phoneBook,phoneBookSize,ID,6,date);
+                    break;
+                default:
+                    break;
+                }
                 printf("\nPerson with id=%d changed!!!\n",ID);
             }
             break;
