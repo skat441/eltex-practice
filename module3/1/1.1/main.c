@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
       exit(EXIT_FAILURE);
     }
     else if (p == 0){//child
-        printf("Child\n");
         close(fd[0]);
         for(int i=0;i<size;i++){
             if(i%2==0)arr[i]=arr[i]*arr[i];
@@ -29,7 +28,6 @@ int main(int argc, char *argv[])
         exit(EXIT_SUCCESS);
     }
     else{//parent
-        printf("Parent\n");
         close(fd[1]);
         for(int i=0;i<size;i++){
             if(i%2!=0)arr[i]=arr[i]*arr[i];

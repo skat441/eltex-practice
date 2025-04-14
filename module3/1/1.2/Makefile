@@ -1,7 +1,7 @@
-all: main Max sum Strcat Maxlength
+all: bush Max sum Strcat Maxlength
 
-main: main.c
-	gcc main.c -o main
+bush: bush.c
+	gcc bush.c -o bush
 
 Max: Max.c
 	gcc Max.c -o Max
@@ -16,4 +16,4 @@ Maxlength: Maxlength.c
 	gcc Maxlength.c -o Maxlength
 
 clean:
-	rm -rf *.o main Max sum Strcat Maxlength
+	rm -rf *.o bush Max sum Strcat Maxlength

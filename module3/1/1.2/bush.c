@@ -1,0 +1,80 @@
+#include<stdio.h>
+#include<unistd.h>
+#include <string.h>
+#include<stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#define SIZE 100
+char** getArgv(char buff[SIZE]){
+    char argc[SIZE]={0};
+    char buff2[SIZE]={0};
+    char nulbuf[SIZE]={0};
+    char** argv=NULL;
+    sscanf(buff,"%s %s",buff2,argc);
+    argv=(char**)calloc(sizeof(char*),(atoi(argc)+2));
+    argv[atoi(argc)+1]=NULL;
+    char* argbuf=0;
+    for (int i = 1; i < atoi(argc)+1; i++)
+    {
+        strcpy(buff2,nulbuf);
+        sscanf(buff,"%s",buff2);
+        argbuf=(char*)calloc(sizeof(char),strlen(buff2)+1);
+        strcpy(argbuf,buff2);//
+        argv[i]=argbuf;
+    }
+    return argv;
+}
+
+int main(){
+    char buff[SIZE]={0};
+    char buff2[SIZE]={0};
+    char nulbuf[SIZE]={0};
+    do{
+        strcpy(buff,nulbuf);
+        printf(">>");
+        fgets(buff,SIZE,stdin);
+        sscanf(buff,"%s",buff2);
+        char argc[SIZE]={0};
+        // char** argv;
+        // if(strcmp(buff,"Sum")==0||(strcmp(buff,"Strcat")==0)||(strcmp(buff,"Max")==0)||(strcmp(buff,"Maxlength")==0)){
+        //     argv=getArgv();
+        // }
+        pid_t p = fork();
+        if(p<0){
+            perror("fork fail");
+            exit(EXIT_FAILURE);
+        }
+        else if(p == 0){//child with
+            if(strcmp(buff2,"Sum")==0){
+                char** argv=getArgv(buff);
+                argv[0]="./sum";
+                execvp(argv[0],argv);
+                
+            }
+            else if(strcmp(buff2,"Strcat")==0){
+                char** argv=getArgv(buff);
+                argv[0]="./Strcat";
+                execvp(argv[0],argv);
+            }
+            else if(strcmp(buff2,"Max")==0){
+                char** argv=getArgv(buff);
+                argv[0]="./Max";
+                execvp(argv[0],argv);
+            }
+            else if(strcmp(buff2,"Maxlength")==0){
+                char** argv=getArgv(buff);
+                argv[0]="./Maxlength";
+                execvp(argv[0],argv);
+            }
+            else if(strcmp(buff2,"bush")==0){
+                char* argv[]={"./bush",NULL};
+                execvp(argv[0],argv);
+            }
+            exit(EXIT_SUCCESS);
+        }
+        else{//Parent
+            wait(NULL);
+        }
+    }while(strcmp(buff,"q")!=0);
+    return 0;
+}

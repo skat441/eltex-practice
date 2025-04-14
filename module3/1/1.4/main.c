@@ -5,12 +5,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <time.h>
 int main(int argc, char *argv[])
 {
     int rv;
-    int size=argc;
-    int* arr=(int*)malloc(sizeof(int)*size);
-    for(int i=1;i<size;i++)arr[i]=atoi(argv[i]);
+    int n=atoi(argv[1]);
     int fd[2];
     pipe(fd);
     pid_t p = fork();
@@ -19,31 +18,37 @@ int main(int argc, char *argv[])
       exit(EXIT_FAILURE);
     }
     else if (p == 0){//child
-        printf("Child\n");
         close(fd[0]);
-        for(int i=0;i<size;i++){
-            if(i%2==0)arr[i]=arr[i]*arr[i];
+        int num;
+        srand(time(NULL));
+        for(int i=0;i<n;i++){
+            num=rand()%256;
+            write(fd[1],&num,sizeof(int));
         }
-        write(fd[1],arr,sizeof(int)*size);
         close(fd[1]);
         exit(EXIT_SUCCESS);
     }
     else{//parent
-        printf("Parent\n");
         close(fd[1]);
-        for(int i=0;i<size;i++){
-            if(i%2!=0)arr[i]=arr[i]*arr[i];
-        }
         wait(&rv);
         int num;
-        for(int i=0;i<size;i++){
-            read(fd[0],&num,sizeof(int));
-            if(i%2==0)arr[i]=num;
-            
+        printf("Nums:");
+        int file=open("save.txt",O_CREAT|O_RDWR|O_TRUNC,0777);
+        if(file<0){
+            printf("Error to open file");
+            return 0;
+        }
+        else{
+            for(int i=0;i<n;i++){
+                read(fd[0],&num,sizeof(int));
+                write(file,&num,sizeof(int));
+                printf("%d ",num);
+                
+            }
+            close(file);
         }
         close(fd[0]);
     }
-    for(int i=1;i<size;i++)printf("%d ",arr[i]);
     printf("\n");
     return 0;
 }
