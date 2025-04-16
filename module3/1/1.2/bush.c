@@ -13,13 +13,15 @@ char** getArgv(char buff[SIZE]){
     sscanf(buff,"%s %s",buff2,argc);
     argv=(char**)calloc(sizeof(char*),(atoi(argc)+2));
     argv[atoi(argc)+1]=NULL;
-    char* argbuf=0;
+    char* argbuf=strtok(buff," ");//=./
+    argbuf=strtok(NULL," ");//=argc
+    char *buff3;
     for (int i = 1; i < atoi(argc)+1; i++)
     {
         strcpy(buff2,nulbuf);
-        sscanf(buff,"%s",buff2);
-        argbuf=(char*)calloc(sizeof(char),strlen(buff2)+1);
-        strcpy(argbuf,buff2);//
+        buff3=strtok(NULL," ");
+        argbuf=(char*)calloc(sizeof(char),strlen(buff3)+1);
+        strcpy(argbuf,buff3);//
         argv[i]=argbuf;
     }
     return argv;
@@ -75,6 +77,6 @@ int main(){
         else{//Parent
             wait(NULL);
         }
-    }while(strcmp(buff,"q")!=0);
+    }while(strcmp(buff2,"q")!=0);
     return 0;
 }

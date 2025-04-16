@@ -283,29 +283,91 @@ void changePersonList(Node* head, int ID, char fieldToChange, ...){
 
 
 void saveList(Node* head){
-    int file=open("save.txt",O_CREAT|O_RDWR,0777);
+    int file=open("save.txt",O_CREAT|O_RDWR|O_TRUNC,0777);
     if(file<0){
         printf("Error to open file");
         return;
     }
+    int writeSuccsess=0;
     for(Node* iNode=head;iNode!=NULL;iNode=iNode->nextP){
+        writeSuccsess=0;
         int fname_size=strlen(iNode->p->FirstName)+1;
         int lname_size=strlen(iNode->p->LastName)+1;
-        write(file,&iNode->p->id,sizeof(int));
-        write(file,&fname_size,sizeof(int));
-        write(file,iNode->p->FirstName,sizeof(char)*fname_size);
-        write(file,&lname_size,sizeof(int));
-        write(file,iNode->p->LastName,sizeof(char)*lname_size);
-        write(file,&iNode->p->ExtraInformation,sizeof(char));
+        writeSuccsess=write(file,&iNode->p->id,sizeof(int));
+        if(writeSuccsess<=0){//Empty file or EOF
+            perror("Error to write id\n");
+            close(file);
+            return;
+        }
+        writeSuccsess=write(file,&fname_size,sizeof(int));
+        if(writeSuccsess<=0){
+            perror("Error to write fname size\n");
+            close(file);
+            return;
+        }
+        writeSuccsess=write(file,iNode->p->FirstName,sizeof(char)*fname_size);
+        if(writeSuccsess<=0){
+            perror("Error to write fname\n");
+            close(file);
+            return;
+        }
+        writeSuccsess=write(file,&lname_size,sizeof(int));
+        if(writeSuccsess<=0){
+            perror("Error to write lname size\n");
+            close(file);
+            return;
+        }
+        writeSuccsess=write(file,iNode->p->LastName,sizeof(char)*lname_size);
+        if(writeSuccsess<=0){
+            perror("Error to write lastname\n");
+            close(file);
+            return;
+        }
+        writeSuccsess=write(file,&iNode->p->ExtraInformation,sizeof(char));
+        if(writeSuccsess<=0){
+            perror("Error to write extra\n");
+            close(file);
+            return;
+        }
         //printf("id:%d\tfirstname:%s lastname:%s\n",iNode->p->id,iNode->p->FirstName,iNode->p->LastName);
         if(iNode->p->ExtraInformation==1){
-            write(file,&iNode->p->PhoneNumber,sizeof(long long));
+            writeSuccsess=write(file,&iNode->p->PhoneNumber,sizeof(long long));
+            if(writeSuccsess<=0){
+                perror("Error to write phone number\n");
+                close(file);
+                return;
+            }
             int email_size=strlen(iNode->p->Email)+1;
-            write(file,&email_size,sizeof(int));
-            write(file,iNode->p->Email,sizeof(char)*email_size);
-            write(file,&iNode->p->BirthDate.day,sizeof(char));
-            write(file,&iNode->p->BirthDate.month,sizeof(char));
-            write(file,&iNode->p->BirthDate.year,sizeof(short));
+            writeSuccsess=write(file,&email_size,sizeof(int));
+            if(writeSuccsess<=0){
+                perror("Error to write email size\n");
+                close(file);
+                return;
+            }
+            writeSuccsess=write(file,iNode->p->Email,sizeof(char)*email_size);
+            if(writeSuccsess<=0){
+                perror("Error to write email\n");
+                close(file);
+                return;
+            }
+            writeSuccsess=write(file,&iNode->p->BirthDate.day,sizeof(char));
+            if(writeSuccsess<=0){
+                perror("Error to write birthdate day\n");
+                close(file);
+                return;
+            }
+            writeSuccsess=write(file,&iNode->p->BirthDate.month,sizeof(char));
+            if(writeSuccsess<=0){
+                perror("Error to write birthdate month\n");
+                close(file);
+                return;
+            }
+            writeSuccsess=write(file,&iNode->p->BirthDate.year,sizeof(short));
+            if(writeSuccsess<=0){
+                perror("Error to write birthdate year\n");
+                close(file);
+                return;
+            }
             // printf("id:%d\tfirstname:%s lastname:%s phonenumber:%llu E-mail:%s bithdate:%d.%d.%d\n",
             // iNode->p->id,iNode->p->FirstName,iNode->p->LastName, iNode->p->PhoneNumber,iNode->p->Email,
             // iNode->p->BirthDate.day, iNode->p->BirthDate.month, iNode->p->BirthDate.year);
@@ -324,11 +386,12 @@ Node* loadList(){
     int id=1;
     int readSuccsess=0;
     do{
-        char* fname[100]={0};
-        char* lname[100]={0};
+        readSuccsess=0;
+        char fname[100]={0};
+        char lname[100]={0};
         int extra=0;
         long long phone=0;
-        char* email[100]={0};
+        char email[100]={0};
         Date date;
         date.day=0;
         date.month=0;
@@ -337,19 +400,78 @@ Node* loadList(){
         int lname_size=0;
         int email_size=0;
         readSuccsess=read(file,&id,sizeof(int));
-        read(file,&fname_size,sizeof(int));
-        read(file,&fname,sizeof(char)*fname_size);
-        read(file,&lname_size,sizeof(int));
-        read(file,&lname,sizeof(char)*lname_size);
-        read(file,&extra,sizeof(char));
+        if(readSuccsess<=0){//Empty file or EOF
+            close(file);
+            return head;
+        }
+        readSuccsess=read(file,&fname_size,sizeof(int));
+        if(readSuccsess<=0){
+            perror("error to read first name size\n");
+            close(file);
+            return head;
+        }
+        readSuccsess=read(file,&fname,sizeof(char)*fname_size);
+        if(readSuccsess<=0){
+            perror("error to read first name\n");
+            close(file);
+            return head;
+        }
+        readSuccsess=read(file,&lname_size,sizeof(int));
+        if(readSuccsess<=0){
+            perror("error to read last name size\n");
+            close(file);
+            return head;
+        }
+        readSuccsess=read(file,&lname,sizeof(char)*lname_size);
+        if(readSuccsess<=0){
+            perror("error to read last name\n");
+            close(file);
+            return head;
+        }
+        readSuccsess=read(file,&extra,sizeof(char));
+        if(readSuccsess<=0){
+            perror("error to read extra info bit\n");
+            close(file);
+            return head;
+        }
         //printf("id:%d\tfirstname:%s lastname:%s\n",iNode->p->id,iNode->p->FirstName,iNode->p->LastName);
         if(extra==1){
-            read(file,&phone,sizeof(long long));
-            read(file,&email_size,sizeof(int));
-            read(file,&email,sizeof(char)*email_size);
-            read(file,&date.day,sizeof(char));
-            read(file,&date.month,sizeof(char));
-            read(file,&date.year,sizeof(short));
+            readSuccsess=read(file,&phone,sizeof(long long));
+            if(readSuccsess<=0){
+                perror("error to read phone number\n");
+                close(file);
+                return head;
+            }
+            readSuccsess=read(file,&email_size,sizeof(int));
+            if(readSuccsess<=0){
+                perror("error to read email size\n");
+                close(file);
+                return head;
+            }
+            readSuccsess=read(file,&email,sizeof(char)*email_size);
+            if(readSuccsess<=0){
+                perror("error to read email\n");
+                close(file);
+                return head;
+            }
+            readSuccsess=read(file,&date.day,sizeof(char));
+            if(readSuccsess<=0){
+                perror("error to read day of bithday\n");
+                close(file);
+                return head;
+            }
+            readSuccsess=read(file,&date.month,sizeof(char));
+            if(readSuccsess<=0){
+                perror("error to read month of bithday\n");
+                close(file);
+                return head;
+            }
+            readSuccsess=read(file,&date.year,sizeof(short));
+            if(readSuccsess<=0){
+                perror("error to read year of bithday\n");
+                close(file);
+                return head;
+            }
             // printf("id:%d\tfirstname:%s lastname:%s phonenumber:%llu E-mail:%s bithdate:%d.%d.%d\n",
             // iNode->p->id,iNode->p->FirstName,iNode->p->LastName, iNode->p->PhoneNumber,iNode->p->Email,
             // iNode->p->BirthDate.day, iNode->p->BirthDate.month, iNode->p->BirthDate.year);
@@ -362,4 +484,15 @@ Node* loadList(){
     }while(readSuccsess!=0);
     close(file);
     return head;
+}
+
+int getMaxId(Node* head){
+    int maxID=0;
+    for(Node* iNode=head;iNode!=NULL;iNode=iNode->nextP){
+        if(iNode->p->id>maxID){
+            //printf("%d\n",iNode->p->id);
+            maxID=iNode->p->id;}
+    }
+    maxID++;
+    return maxID;
 }

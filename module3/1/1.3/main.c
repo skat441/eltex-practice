@@ -4,8 +4,7 @@
 int main(){ 
     Node* head=loadList();
     int id =1;
-    if(head!=NULL && head->prevP!=NULL)id=head->prevP->p->id+1;
-    else if(head!=NULL)id=head->p->id+1;
+    id=getMaxId(head);
     int ID;
     char isfound;
     char answer=0;

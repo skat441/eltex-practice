@@ -5,12 +5,12 @@
 int main(int argc, char *argv[])
 {
     int sumlen=0;
-    printf("Number of args is:%d (",argc-1);
+    //printf("Number of args is:%d (",argc-1);
     for(int i=1;i<argc;i++){
-        printf("%s ",argv[i]);
+        //printf("%s ",argv[i]);
         sumlen+=strlen(argv[i]);
     }
-    printf(")\n");
+    //printf(")\n");
     char* newStr=(char*)calloc(sizeof(char),sumlen+1);
     int k=0;
     for(int i=1;i<argc;i++){
@@ -20,6 +20,6 @@ int main(int argc, char *argv[])
         }
     }
     newStr[sumlen]='\0';
-    printf("%s\n",newStr);
+    printf("%s",newStr);
     return 0;
 }
