@@ -16,10 +16,7 @@ static void
 send_msg(int qid, int msgtype, char buff[SIZE])
 {
     struct msgbuf  msg;
-
     msg.mtype = msgtype;
-
-    
     strcpy(msg.mtext,buff);
 
     if (msgsnd(qid, &msg, sizeof(msg.mtext),0) == -1)
@@ -27,66 +24,45 @@ send_msg(int qid, int msgtype, char buff[SIZE])
         perror("msgsnd error");
         exit(EXIT_FAILURE);
     }
-    printf("sent: %s\n", msg.mtext);
 }
 
 int
 main(int argc, char *argv[])
 {
     int  qid, opt;
-    int  msgtype = 1;
-    int  msgkey = 1111;
+    int  msgkey = 2222;
     char answer=0;
     char buff[SIZE]={0};
     char nulbuf[SIZE]={0};
+    char checkbuff[SIZE]={0};
+    qid = msgget(msgkey, IPC_CREAT | 0666);
+    if (qid == -1) {
+        perror("msgget");
+        exit(EXIT_FAILURE);
+    }
     do{
-        printf("q. exit\n");   
-        printf("1. send message\n");   
-        printf("2. recive all messages\n");
-        printf("Your choose:");
-        fgets(buff,SIZE,stdin);
-        fseek(stdin,0,SEEK_END);//clear stdin
-        sscanf(buff,"%c",&answer);
         strcpy(buff,nulbuf);//clear buffer
-        switch (answer)
-        {
-        case  '1':
-            printf("Enter your message:");
-            fgets(buff,SIZE,stdin);
-            fseek(stdin,0,SEEK_END);
-            qid = msgget(msgkey, IPC_CREAT | 0666);
-            if (qid == -1) {
-                perror("msgget");
-                exit(EXIT_FAILURE);
-            }
-            send_msg(qid,msgtype,buff);
-            break;
-        case '2':
-            struct msgbuf msg;
-            strcpy(msg.mtext,nulbuf);
-            qid = msgget(msgkey, IPC_CREAT | 0666);
-            if (qid == -1) {
-                perror("msgget");
-                exit(EXIT_FAILURE);
-            }
-            while(msgrcv(qid, &msg, sizeof(msg.mtext), 2,IPC_NOWAIT) != -1){
-                printf("%s",msg.mtext);
-                strcpy(msg.mtext,nulbuf);
-            }
-            if(msgrcv(qid, &msg, sizeof(msg.mtext), 255,IPC_NOWAIT) != -1)exit(EXIT_SUCCESS);
-            break;
-        case 'q':
-            qid = msgget(msgkey, IPC_CREAT | 0666);
-            if (qid == -1) {
-                perror("msgget");
-                exit(EXIT_FAILURE);
-            }
-            strcpy(buff,"exit");
+        strcpy(checkbuff,nulbuf);//clear buffer
+        printf("Enter your message:");
+        fgets(buff,SIZE,stdin);
+        fseek(stdin,0,SEEK_END);
+        sscanf(buff,"%s",checkbuff);
+        if(strcmp(checkbuff,"exit")==0){
+            send_msg(qid,1,buff);
             send_msg(qid,255,buff);
             break;
-        default:
-            break;
         }
-    }while(answer != 'q');
+        else{
+            send_msg(qid,1,buff);
+        }
+        struct msgbuf msg;
+
+        if(msgrcv(qid, &msg, sizeof(msg.mtext), 2,0)==-1){
+            perror("msgrecv");
+            exit(EXIT_FAILURE);
+        }
+        if(msgrcv(qid, &msg, sizeof(msg.mtext), 255,IPC_NOWAIT) != -1)exit(EXIT_SUCCESS);//check input for exit message
+        printf("get:%s",msg.mtext);
+    }while(1);
     exit(EXIT_SUCCESS);
 }
