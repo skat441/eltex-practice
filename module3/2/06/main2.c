@@ -34,9 +34,8 @@ int
 main(int argc, char *argv[])
 {
     int  qid, opt;
-    int  msgtype = 1;
-    int  mymsgkey = 2222;
-    int  other_msgkey = 1111;
+    int  msgtype = 2;
+    int  msgkey = 1111;
     char answer=0;
     char buff[SIZE]={0};
     char nulbuf[SIZE]={0};
@@ -56,7 +55,7 @@ main(int argc, char *argv[])
             printf("Enter your message:");
             fgets(buff,SIZE,stdin);
             fseek(stdin,0,SEEK_END);
-            qid = msgget(other_msgkey, IPC_CREAT | 0666);
+            qid = msgget(msgkey, IPC_CREAT | 0666);
             if (qid == -1) {
                 perror("msgget");
                 exit(EXIT_FAILURE);
@@ -66,19 +65,19 @@ main(int argc, char *argv[])
         case '2':
             struct msgbuf msg;
             strcpy(msg.mtext,nulbuf);
-            qid = msgget(mymsgkey, IPC_CREAT | 0666);
+            qid = msgget(msgkey, IPC_CREAT | 0666);
             if (qid == -1) {
                 perror("msgget");
                 exit(EXIT_FAILURE);
             }
-            while(msgrcv(qid, &msg, sizeof(msg.mtext), msgtype,IPC_NOWAIT) != -1){
+            while(msgrcv(qid, &msg, sizeof(msg.mtext), 1,IPC_NOWAIT) != -1){
                 printf("%s",msg.mtext);
                 strcpy(msg.mtext,nulbuf);
             }
             if(msgrcv(qid, &msg, sizeof(msg.mtext), 255,IPC_NOWAIT) != -1)exit(EXIT_SUCCESS);
             break;
         case 'q':
-            qid = msgget(other_msgkey, IPC_CREAT | 0666);
+            qid = msgget(msgkey, IPC_CREAT | 0666);
             if (qid == -1) {
                 perror("msgget");
                 exit(EXIT_FAILURE);

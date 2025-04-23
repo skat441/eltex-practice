@@ -37,10 +37,6 @@ int main(){
         fgets(buff,SIZE,stdin);
         sscanf(buff,"%s",buff2);
         char argc[SIZE]={0};
-        // char** argv;
-        // if(strcmp(buff,"Sum")==0||(strcmp(buff,"Strcat")==0)||(strcmp(buff,"Max")==0)||(strcmp(buff,"Maxlength")==0)){
-        //     argv=getArgv();
-        // }
         pid_t p = fork();
         if(p<0){
             perror("fork fail");
